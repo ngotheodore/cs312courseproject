@@ -1,0 +1,64 @@
+---
+- name: Create Minecraft Server
+  hosts: Minecraft
+  become: true
+
+  tasks:
+    - name: Create Minecraft User
+      user:
+        name: minecraft
+        shell: /bin/bash
+        create_home: yes
+    
+    - name: Create Minecraft Directory
+      file:
+        path: ~/mc_server
+        state: directory
+        owner: minecraft
+        group: minecraft
+    
+    - name: Download Java File
+      get_url:
+        url: "https://corretto.aws/downloads/latest/amazon-corretto-25-aarch64-linux-jdk.tar.gz"
+        dest: "amazon-corretto-25-aarch64-linux-jdk.tar.gz"
+        mode: '0644'
+    
+    - name: Extract Java File
+      unarchive:
+        src: "amazon-corretto-25-aarch64-linux-jdk.tar.gz"
+        dest: "~/mc_server"
+        remote_src: yes
+
+    - name: Download Minecraft Server
+      get_url:
+        url: "https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar"
+        dest: "server.jar"
+        owner: minecraft
+        group: minecraft
+        mode: '0755'
+
+    - name: Create the systemd service file
+      copy:
+        dest: "/etc/systemd/system/minecraft.service"
+        content: |
+          [Unit] Description=Minecraft Server After=network.target
+          
+          [Service] Type=simple
+          
+          User=ec2-user 
+          Group=ec2-user 
+          WorkingDirectory=/home/ec2-user/mc_server
+          
+          ExecStart=/home/ec2-user/mc_server/amazon-corretto-25.0.3.9.1-linux-aarch64/bin/java -Xmx1300M -Xms1300M -jar server.jar nogui
+          
+          [Install] WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
+
+    - name: Enable minecraft.service
+      systemd:
+        name: minecraft
+        enabled: yes
+        state: started
