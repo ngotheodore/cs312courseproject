@@ -12,21 +12,21 @@ For the repository to function properly, the following is required to have:
 ## Terraform Files
 ### variable.tf
 The variable.tf file is written with the following commands:
-> variable "ami_id" {
-  description = "AMI ID for the EC2 instance (Ubuntu 26.04 in us-east-1)"
-  type        = string
-  default     = "ami-0d13e2317a7e75c95"
-}
-> variable "instance_type" {
-  description = "EC2 instance type"
-  type        = string
-  default     = "t4g.small"
-}
-> variable "Minecraft_Key" {
-  description = "Name of the SSH key pair (must already exist in AWS)"
-  type        = string
-  default     = "Minecraft_Key.pem"
-}
+>     variable "ami_id" {
+>       description = "AMI ID for the EC2 instance (Ubuntu 26.04 in us-east-1)"
+>       type        = string
+>       default     = "ami-0d13e2317a7e75c95"
+>     }
+>     variable "instance_type" {
+>       description = "EC2 instance type"
+>        type        = string
+>        default     = "t4g.small"
+>     }
+>     variable "Minecraft_Key" {
+>       description = "Name of the SSH key pair (must already exist in AWS)"
+>       type        = string
+>       default     = "Minecraft_Key.pem"
+>     }
 
 This establishes the following variables:
 * **AMI ID**: This determines the operating system the instance uses
@@ -36,64 +36,65 @@ This establishes the following variables:
 These variables will be used in the main.tf file.
 ### main.tf
 The main.tf file is written with the following commands:
->terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
+>     terraform {
+>       required_providers {
+>         aws = {
+>           source  = "hashicorp/aws"
+>           version = "~> 5.0"
+>         }
+>       }
+>     }
 >
->provider "aws" {
-  region = "us-east-1"
-}
->data "aws_vpc" "default" {
-  default = true
-}
+>     provider "aws" {
+>       region = "us-east-1"
+>     }
+> 
+>     data "aws_vpc" "default" {
+>       default = true
+>     }
 >
->resource "aws_security_group" "minecraft" {
-  name        = "Minecraft Security Group"
-  vpc_id      = data.aws_vpc.default.id
+>     resource "aws_security_group" "minecraft" {
+>       name        = "Minecraft Security Group"
+>       vpc_id      = data.aws_vpc.default.id
 >
-  >ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+>       ingress {
+>         from_port   = 22
+>         to_port     = 22
+>         protocol    = "tcp"
+>         cidr_blocks = ["0.0.0.0/0"]
+>       }
 >
-  >ingress {
-    from_port   = 25565
-    to_port     = 25565
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+>       ingress {
+>         from_port   = 25565
+>         to_port     = 25565
+>         protocol    = "tcp"
+>         cidr_blocks = ["0.0.0.0/0"]
+>       }
 >
-  >egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+>       egress {
+>         from_port   = 0
+>         to_port     = 0
+>         protocol    = "-1"
+>         cidr_blocks = ["0.0.0.0/0"]
+>       }
+>     }
 >
->resource "aws_instance" "minecraft" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  key_name               = var.key_name
-  vpc_security_group_ids = [aws_security_group.control.id]
-  iam_instance_profile   = "InstanceProfile"
+>     resource "aws_instance" "minecraft" {
+>       ami                    = var.ami_id
+>       instance_type          = var.instance_type
+>       key_name               = var.key_name
+>       vpc_security_group_ids = [aws_security_group.control.id]
+>       iam_instance_profile   = "InstanceProfile"
 >
-  >tags = {
-    Name = "minecrat_server"
-  }
-}
+>       tags = {
+>         Name = "minecrat_server"
+>       }
+>     }
 >
->resource "local_file" "ansible_inventory" {
-  content = "[Minecraft]\n${aws_instance.minecraft_server.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=~\mc_server"
-  filename = "inventory.ini"
-}
+>     resource "local_file" "ansible_inventory" {
+>     content = "[Minecraft]\n${aws_instance.minecraft_server.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=~\mc_server"
+>     filename = "inventory.ini"
+>     }
 
 This is what each block does:
 * **Terraform** - Specifies the provider to use
@@ -104,9 +105,9 @@ This is what each block does:
 * **resource "local_file" "ansible_inventory"** - Creates the inventory.ini file to be used by the Ansible playbook
 ### outputs.tf
 The outputs.tf file is written with the following commands:
->output "public_ip" {
-  value       = aws_instance.minecraft_server.public_ip
-}
+>     output "public_ip" {
+>       value       = aws_instance.minecraft_server.public_ip
+>     }
 
 This block outputs the public IP of the instance to the terminal.
 ## Ansible Playbook
@@ -121,21 +122,17 @@ This is what each block does:
 * **Extract Java File** - Extracts the file to the specified destination and tells ansible that the file is already on the host so that it doesn't get retrieved again
 * **Download Minecraft Server** - Retrieves the server file from the provided link and downloads it to the specified destination while also establishing the owner, group, and permissions
 * **Create the systemd file** - Creates the *minecraft.service* file and writes the following commands to the file:
-> [Unit]
-> Description=Minecraft Server
-> After=network.target
+>     [Unit] Description=Minecraft Server After=network.target
 >
->[Service]
->Type=simple
+>     [Service] Type=simple
 >
->User=ec2-user
->Group=ec2-user
->WorkingDirectory=/home/ec2-user/mc_server
+>     User=ec2-user
+>     Group=ec2-user
+>     WorkingDirectory=/home/ec2-user/mc_server
 >
->ExecStart=/home/ec2-user/mc_server/amazon-corretto-25.0.3.9.1-linux-aarch64/bin/java -Xmx1300M -Xms1300M -jar server.jar nogui
+>     ExecStart=/home/ec2-user/mc_server/amazon-corretto-25.0.3.9.1-linux-aarch64/bin/java -Xmx1300M -Xms1300M -jar server.jar nogui
 >
->[Install]
->WantedBy=multi-user.target
+>     [Install] WantedBy=multi-user.target
 
 * **Reload systemd** - Reload systemd to ensure its working
 * **Enable minecraft.service** - Enables the systemd file to automatically start up the Minecraft server
