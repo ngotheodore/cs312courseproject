@@ -1,4 +1,4 @@
-\# Background
+# Background
 
 The purpose of this repository is to automate the process of configuring and creating an AWS EC2 instance, as well as downloading and configuring the resources required to create and start up a Minecraft server. This will be accomplished by using Terraform and Ansible files to automate these steps. Specifically, the process of creating the AWS EC2 instance will be accomplished through Terraform files, and the process of creating the Minecraft server will be accomplished through an Ansible playbook and a supporting inventory.ini file. 
 
