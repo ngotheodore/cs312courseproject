@@ -8,7 +8,7 @@ For the repository to function properly, the following is required to have:
 * AWS account credentials
 * An SSH key pair file (e.g. Minecraft_Key.pem)
 # Diagram
-![Diagram of major steps](diagram.png)
+![Diagram of major steps](Images/diagram.png)
 ## Terraform Files
 ### variable.tf
 The variable.tf file is written with the following commands:
@@ -111,8 +111,8 @@ The outputs.tf file is written with the following commands:
 This block outputs the public IP of the instance to the terminal.
 ## Ansible Playbook
 The Ansible playbook, *playbook.yml*, is written with the following commands:
-![Screenshot 1 of playbook](playbook_1.png)
-![Screenshot 2 of playbook](playbook_2.png)
+![Screenshot 1 of playbook](Images/playbook_1.png)
+![Screenshot 2 of playbook](Images/playbook_2.png)
 This is what each block does:
 * **Create Minecraft Server** - References the Minecraft group in the inventory.ini file and enables the tasks to be ran with sudo (admin privileges)
 * **Create Minecraft User** - Creates user to associate with the directory and server
