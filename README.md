@@ -8,7 +8,7 @@ For the repository to function properly, the following is required to have:
 * AWS account credentials
 * An SSH key pair file (e.g. Minecraft_Key.pem)
 # Diagram
-File Path
+![Diagram of major steps](diagram.png)
 ## Terraform Files
 ### variable.tf
 The variable.tf file is written with the following commands:
