@@ -166,8 +166,8 @@ This command connects to the Minecraft server instance with nmap
 * Type in the elastic IP, then press the **Join Server** button
 
 ## Resources
-https://cs312.alexulbrich.com/labs/first-infrastructure-stack/
-https://cs312.alexulbrich.com/labs/automated-configuration-and-deployment/
-https://www.minecraft.net/en-us/download/server
-Course Project Part 1
-ChatGPT
+* https://cs312.alexulbrich.com/labs/first-infrastructure-stack/
+* https://cs312.alexulbrich.com/labs/automated-configuration-and-deployment/
+* https://www.minecraft.net/en-us/download/server
+* Course Project Part 1
+* ChatGPT
